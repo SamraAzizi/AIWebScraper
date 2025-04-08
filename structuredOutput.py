@@ -37,27 +37,3 @@ task = (
     "Respond in JSON format matching this structure:\n"
     "{ 'posts': [ { 'post_title': str, 'post_url': str }, ... ] }"
 )
-
-# Main async logic
-async def main():
-    agent = Agent(task=task, llm=llm, browser=browser, controller=controller)
-    
-    history = await agent.run()
-    result = history.final_result()
-    
-    if result:
-        parsed: Posts = Posts.model_validate_json(result)
-
-        for post in parsed.posts:
-            print('\n--------------------------------')
-            print(f'Title: {post.post_title}')
-            print(f'URL:   {post.post_url}')
-    else:
-        print('No result')
-
-    input("\n✅ Press Enter to close the browser...")
-    await browser.close()
-
-# Entry point
-if __name__ == '__main__':
-    asyncio.run(main())
